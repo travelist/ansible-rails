@@ -1,0 +1,18 @@
+---
+service:
+  name: my-sample-service
+
+ruby:
+  version: 2.2.3
+
+nginx:
+  service:
+    url: www.my-sample.com
+  upload_ssl_keys: false
+
+mysql:
+  root_password: my-mysql-root-password
+  username: my-mysql-user-name
+  password: my-mysql-user-password
+  databases:
+    - my-sample-database

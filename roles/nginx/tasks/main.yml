@@ -1,0 +1,31 @@
+---
+- name: install nginx
+  sudo: yes
+  apt: pkg=nginx state=installed
+  tags: nginx
+
+- name: Make directory for SSL keys
+  sudo: yes
+  command: mkdir -p /etc/nginx/ssl
+
+- name: set SSL keys
+  sudo: yes
+  copy:
+    src: secret/nginx.key
+    dest: /etc/nginx/ssl/nginx.key
+  when: nginx.upload_ssl_keys
+
+- name: set SSL cert
+  sudo: yes
+  copy:
+    src: secret/nginx.crt
+    dest: /etc/nginx/ssl/nginx.crt
+  when: nginx.upload_ssl_keys
+
+- name: Generate SSL
+  sudo: yes
+  command: openssl req -x509 -nodes -subj "/C=JP/ST=Kanagawa/L=Yokohama/O=Example Inc./CN={{ service.name }}" -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/{{ service.name }}.key -out /etc/nginx/ssl/{{ service.name }}.crt
+  when: not nginx.upload_ssl_keys
+
+- name: run up services
+  include: service.yml

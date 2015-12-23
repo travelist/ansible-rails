@@ -1,0 +1,56 @@
+---
+- name: Check whether MySQL is already installed
+  stat: path=/etc/init.d/mysql
+  register: is_mysql_installed
+  tags: mysql
+
+- name: Update apt cache when MySQL is not installed yet
+  sudo: yes
+  apt: update_cache=yes
+  when: is_mysql_installed.stat.exists == false
+  tags: mysql
+
+- name: Ensure MySQL python libraries are installed
+  sudo: yes
+  apt: pkg=python-mysqldb state=installed
+  tags: mysql
+
+- name: Ensure MySQL packages are installed
+  sudo: yes
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - mysql-common
+    - mysql-server
+  notify: 
+    - restart mysql
+  register: mysql_installation
+  tags: mysql
+
+- name: change MySQL root password
+  mysql_user:
+    name: root
+    host: localhost
+    password: "{{ mysql.root_password }}"
+  when: mysql_installation.changed
+
+- name: create databases
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql.root_password }}"
+    name: "{{ item }}"
+    state: present
+  with_items: mysql.databases
+  when: mysql_installation.changed
+  tags: mysql
+
+- name: create a user for the database
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql.root_password }}"
+    name: "{{ mysql.username }}"
+    password: "{{ mysql.password }}"
+    priv: "{{ item }}.*:ALL"
+    host: localhost
+    state: present
+  with_items: mysql.databases
+  tags: mysql

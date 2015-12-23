@@ -1,0 +1,30 @@
+# to communicate with Unicorn 
+upstream {{ service.name }} {
+  server unix:/var/www/{{ service.name }}/shared/tmp/sockets/unicorn.sock fail_timeout=0;
+}
+
+server {
+  listen 80;
+
+  server_name {{ nginx.url }};
+  root /var/www/{{ service.name }}/current/public;
+  access_log {{ nginx.access_log }};
+  error_log {{ nginx.error_log }};
+
+  # listen 443 ssl;
+  # ssl_certificate /etc/nginx/ssl/nginx.crt;
+  # ssl_certificate_key /etc/nginx/ssl/nginx.key;
+
+  location ~ ^/(assets|images|javascripts|stylesheets|system|components)/ {
+    gzip_static on;
+    expires     max;
+    add_header  Cache-Control public;
+  }
+
+  location / {
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_pass http://{{ service.name }};
+  }
+}

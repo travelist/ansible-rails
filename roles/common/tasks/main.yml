@@ -1,0 +1,15 @@
+---
+- name: install Rails-specific dependencies
+  sudo: yes
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - sqlite3
+    - libmysqlclient-dev
+    - libmysqld-dev
+    - libsqlite3-dev
+    - npm
+    - nodejs-legacy # Instead of normal nodejs because: https://github.com/rharriso/bower-rails/issues/91
+
+- name: install
+  sudo: yes
+  shell: npm install bower -g

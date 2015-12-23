@@ -1,0 +1,50 @@
+---
+- name: install dependencies
+  sudo: yes
+  apt: pkg=git-core state=installed
+  tags: rbenv
+
+- name: install rbenv
+  git:
+    repo: https://github.com/rbenv/rbenv.git
+    dest: ~/.rbenv
+  tags: rbenv
+
+- name: Add ~/.rbenv/bin to PATH
+  lineinfile: >
+    dest="~/.profile"
+    line="export PATH=$HOME/.rbenv/bin:$PATH"
+  tags: rbenv
+
+- name: Eval rbenv init in ~/.profile
+  lineinfile: >
+    dest="~/.profile"
+    line='eval "$(rbenv init -)"'
+  tags: rbenv
+
+- name: Copy .gemrc to ~/.gemrc to avoid to install rb-docs
+  sudo: yes
+  copy: src=.gemrc dest=~/.gemrc
+  tags: rbenv
+
+- name: Install dependencies for ruby-build
+  sudo: yes
+  apt: pkg={{ item }}
+  with_items:
+    - autoconf
+    - bison
+    - build-essential
+    - libx11-dev
+    - libssl-dev
+    - libyaml-dev
+    - libreadline6
+    - libreadline6-dev
+    - zlib1g
+    - zlib1g-dev
+  tags: rbenv
+
+- name: Install ruby-build as rbenv plugin
+  git:
+    repo: https://github.com/rbenv/ruby-build.git
+    dest: ~/.rbenv/plugins/ruby-build
+  tags: rbenv

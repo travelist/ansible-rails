@@ -1,0 +1,7 @@
+---
+ - hosts: webserver
+   roles:
+     - common
+     - nginx
+     - mysql
+     - ruby

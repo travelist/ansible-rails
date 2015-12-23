@@ -1,0 +1,19 @@
+---
+service:
+  name: app_name
+
+ruby:
+  version: 2.2.3
+
+nginx:
+  url: www.app_name.com
+  access_log: /var/log/nginx/app_name.access.log
+  error_log: /var/log/nginx/app_name.error.log
+  upload_ssl_keys: false
+
+mysql:
+  root_password: root
+  username: app_name
+  password: password
+  databases:
+    - app_name
