@@ -1,0 +1,46 @@
+---
+- name: Install nginx
+  become: yes
+  become_method: sudo
+  apt: pkg=nginx state=installed
+
+- name: Configure Nginx
+  become: yes
+  become_method: sudo
+  template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/sites-available/{{ rails.application }}"
+
+- name: refect the configuration
+  become: yes
+  become_method: sudo
+  command: "ln -s /etc/nginx/sites-available/{{ rails.application }} /etc/nginx/sites-enabled/{{ rails.application }}"
+  ignore_errors: True
+  notify:
+    - reload nginx
+
+# - name: Make directory for SSL keys
+#   sudo: yes
+#   command: mkdir -p /etc/nginx/ssl
+
+# - name: set SSL keys
+#   sudo: yes
+#   copy:
+#     src: secret/nginx.key
+#     dest: /etc/nginx/ssl/nginx.key
+#   when: nginx.upload_ssl_keys
+
+# - name: set SSL cert
+#   sudo: yes
+#   copy:
+#     src: secret/nginx.crt
+#     dest: /etc/nginx/ssl/nginx.crt
+#   when: nginx.upload_ssl_keys
+
+# - name: Generate SSL
+#   sudo: yes
+#   command: openssl req -x509 -nodes -subj "/C=JP/ST=Kanagawa/L=Yokohama/O=Example Inc./CN={{ rails.application }}" -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/{{ rails.application }}.key -out /etc/nginx/ssl/{{ rails.application }}.crt
+#   when: not nginx.upload_ssl_keys
+
+# - name: run up services
+#   include: service.yml

@@ -1,0 +1,37 @@
+---
+- name: Ensure MySQL Packages Are Installed
+  become: yes
+  become_method: sudo
+  apt: pkg={{ item }} state=installed update_cache=yes
+  with_items:
+    - python-mysqldb
+    - mysql-common
+    - mysql-server
+  notify:
+    - restart mysql
+
+- name: Ensure Current MySQL Root Password
+  mysql_user:
+    check_implicit_admin: True
+    login_user: root
+    login_password: "{{ mysql.root_password }}"
+    name: root
+    password: "{{ mysql.root_password }}"
+    state: present
+
+- name: Create the Rails Database
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql.root_password }}"
+    name: "{{ mysql.rails_database }}"
+    encoding: utf8
+    state: present
+
+- name: Create the Rails User
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql.root_password }}"
+    name: "{{ mysql.rails_username }}"
+    password: "{{ mysql.rails_password }}"
+    priv: "*.*:ALL"
+    state: present

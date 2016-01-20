@@ -1,0 +1,73 @@
+---
+- name: Install Dependencies for Rbenv
+  become: yes
+  become_method: sudo
+  apt: pkg=git-core state=installed
+
+- name: Install Rbenv
+  git:
+    repo: https://github.com/rbenv/rbenv.git
+    dest: ~/.rbenv
+
+- name: Add ~/.rbenv/bin to PATH
+  lineinfile: >
+    dest="~/.profile"
+    line="export PATH=$HOME/.rbenv/bin:$PATH"
+
+- name: Eval rbenv init in ~/.profile
+  lineinfile: >
+    dest="~/.profile"
+    line='eval "$(rbenv init -)"'
+
+- name: Copy .gemrc to ~/.gemrc to Avoid to Install rb-docs
+  become: yes
+  become_method: sudo
+  copy: src=.gemrc dest=~/.gemrc
+
+- name: Install ruby-build as Rbenv Plugin
+  git:
+    repo: https://github.com/rbenv/ruby-build.git
+    dest: ~/.rbenv/plugins/ruby-build
+
+- name: Install dependencies for ruby-build
+  become: yes
+  become_method: sudo
+  apt: pkg={{ item }}
+  with_items:
+    - curl
+    - autoconf
+    - bison
+    - build-essential
+    - sqlite3
+    - python-software-properties
+    - libsqlite3-dev
+    - libx11-dev
+    - libssl-dev
+    - libffi-dev
+    - libxml2-dev
+    - libcurl4-openssl-dev
+    - libxslt1-dev
+    - libyaml-dev
+    - libreadline6
+    - libreadline6-dev
+    - zlib1g
+    - zlib1g-dev
+
+- name: Check the Ruby Version Installed
+  shell: ~/.rbenv/bin/rbenv versions | grep "{{ ruby.version }}" | tr '*' ' ' | sed -e 's/\s\+//' | cut -f1 -d' '
+  register: installed_ruby
+
+- name: Install Ruby
+  shell: RUBY_CONFIGURE_OPTS=--disable-install-doc ~/.rbenv/bin/rbenv install {{ ruby.version }}
+  when: installed_ruby.stdout != "{{ ruby.version }}"
+
+- name: Check Ruby Version
+  shell: bash -lc "rbenv version" | grep "{{ ruby.version }}" | cut -f1 -d' '
+  register: current_ruby_version
+
+- name: Set Current Ruby Version
+  shell: bash -lc "rbenv global {{ ruby.version }}"
+  when: current_ruby_version.stdout != "{{ ruby.version }}"
+
+- name: Install bundle
+  shell: bash -lc "gem install bundler"

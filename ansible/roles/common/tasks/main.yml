@@ -1,0 +1,32 @@
+---
+- name: Install Dependent Packages for Rails
+  become: yes
+  become_method: sudo
+  apt: pkg={{ item }} state=present update_cache=yes
+  with_items:
+    - sqlite3
+    - libmysqlclient-dev
+    - libmysqld-dev
+    - libsqlite3-dev
+    - npm
+    - nodejs-legacy # Instead of normal nodejs because: https://github.com/rharriso/bower-rails/issues/91
+
+- name: Install bower
+  become: yes
+  become_method: sudo
+  shell: npm install bower -g
+
+- name: Check the Presence of Deployment Destination
+  stat: path=/var/www
+  register: deploy_dir
+
+- name: Make the Destination Directory If It Does Not Exist
+  become: yes
+  become_method: sudo
+  file: path=/var/www state=directory
+  when: deploy_dir.stat.isdir is not defined
+
+- name: Change the Ownewrship of the Destination Directory
+  become: yes
+  become_method: sudo
+  file: path=/var/www state=directory group={{ ansible_ssh_user }} owner={{ ansible_ssh_user }}

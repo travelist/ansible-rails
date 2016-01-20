@@ -1,0 +1,15 @@
+---
+rails:
+  application: hello_world
+
+ruby:
+  version: 2.2.3
+
+nginx:
+  url: www.hello_world.com
+
+mysql:
+  root_password: 123456789
+  rails_username: rails
+  rails_password: 123456789
+  rails_database: rails_db

@@ -1,0 +1,7 @@
+---
+- hosts: rails
+  roles:
+    - common
+    - nginx
+    - mysql
+    - ruby
