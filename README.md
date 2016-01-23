@@ -1,7 +1,16 @@
-# Rails Ansible
+# Rails Ansible ![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)
+
 Ansible script for building Capistrano deploy-able Rails environment with Nginx and MySQL on Ubuntu Machine.
 
 This project aims to (1) automate to build Rails environment and (2) provide the Rails configuration examples to releave the pain of setting these stuff by hand.
+
+|| Remarks |
+|---|---|
+|Ubuntu| >= 14.04 |
+|Ruby on Rails| |
+|MySQL| |
+|Nginx| Currently SSL certificate is not setted |
+
 
 # How to Use
 
@@ -73,7 +82,7 @@ Now, we get the server prepared for Rails deployment unless hitting some errors.
 
 - Execute Capistrano
 ```
-$ Cap staging deploy
+$ cap staging deploy
 ```
 
 Then, we can access your Rails service via `http://192.168.33.3`
