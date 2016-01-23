@@ -1,4 +1,4 @@
-# Rails Ansible ![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)
+# Ansible Rails ![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)
 
 Ansible script for building Capistrano deploy-able Rails environment with Nginx and MySQL on Ubuntu Machine.
 
