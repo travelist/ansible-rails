@@ -1,0 +1,14 @@
+source 'https://rubygems.org'
+
+# Use Unicorn as the app server
+gem 'unicorn'
+
+# MySQL adopter
+gem 'mysql2', '~> 0.3.13'
+
+# Use Capistrano for deployment
+gem 'capistrano'
+gem 'capistrano-rails'
+gem 'capistrano-rbenv'
+gem 'capistrano-bundler'
+gem 'capistrano3-unicorn'
