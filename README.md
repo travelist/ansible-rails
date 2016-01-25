@@ -8,8 +8,10 @@ This project aims to (1) automate to build Rails environment and (2) provide the
 |---|---|
 |Ubuntu| >= 14.04 |
 |Ruby on Rails| |
+|Unicorn| |
 |MySQL| |
 |Nginx| Currently SSL certificate is not setted |
+|Rbenv| |
 
 
 # How to Use
