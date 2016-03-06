@@ -16,7 +16,7 @@ This project aims to (1) automate to build Rails environment and (2) provide the
 
 # How to Use
 
-Assume we have Ubuntu servers with an user having no-password sudo rights.
+Assume we have Ubuntu servers with an user having **no-password sudo** rights.
 If the user does not have this rights, please execute a following command (edit `username`).
 ```
 echo "username ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -24,7 +24,7 @@ echo "username ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 - Edit configuration of ansible
   - `ansible/group_vars/rails`
-  - `ansible/hosts` # Specify the IP address
+  - `ansible/hosts` # Specify the IP address of the target machine
 
 - Install Ansible
 ```
@@ -36,8 +36,16 @@ $ pip install -r requirements.txt
 $ ansible-playbook -i hosts rails.yml -u username
 ```
 
-- Edit your rails environment (We have sample configuration under `rails_config`)
+- Add **Unicorn** and **Capistrano** configuration files to your project (We have sample configuration under `rails_config` directory)
 - Execute Capsitrano (e.g. `cap staging deploy`)
+
+When we use this script for production environment, please manually set **SECRET_KEY_BASE** environment variable.
+
+```
+$ rake secret
+=> "Copy this secret string"
+export SECRET_KEY_BASE="the secret string"
+```
 
 # TODO
 
@@ -45,7 +53,6 @@ Following features will be supported in the future release.
 Your pull requests related/not-related these features are really appreciated.
 
 - Automate SSL configuration for Nginx
-- Automate Password-less sudo user setting
 
 # Quick Excercise with Vagrant
 
@@ -74,13 +81,13 @@ $ vim ~/.ssh/authorized_keys (guest machine)
 $ ansible-playbook -i hosts vagrant.yml -u vagrant
 ```
 
-Now, we get the server prepared for Rails deployment unless hitting some errors.
+Now, we get the server prepared for Rails deployment unless hitting any errors.
 
-`Assume you have some rails project hosted in Github`
+Assume you have some rails project hosted on Github
 
 - Upload your Vagrant's SSH public key to Github as a deploy key
 
-- Configure Unicorn and Capistrano configuration according to `rails_config` examples
+- Configure Unicorn and Capistrano according to `rails_config` examples
 
 - Execute Capistrano
 ```
